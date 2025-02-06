@@ -4,7 +4,7 @@
 
 <template>
   <nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-md">
-    <div class="container-fluid">
+    <div class="container-lg container-fluid">
       <a class="navbar-brand" href="#">
         <img src="../../../public/vite.svg" alt="Logo" width="35" height="35">
         Tresoria

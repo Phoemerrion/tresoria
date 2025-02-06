@@ -9,7 +9,7 @@ const currentView = computed(() => props.view);
 </script>
 
 <template>
-  <main class="bg-light p-1">
+  <main class="container-lg container-fluid p-1">
     <AccueilContainer v-if="currentView === 'Accueil'" />
     <JouerContainer v-if="currentView === 'Jouer'" />
     <AideContainer v-if="currentView === 'Aide'" />
