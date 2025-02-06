@@ -124,19 +124,30 @@ function placeElements() {
   }
 }
 
-// Ajouter les éléments à la grille
-onMounted(() => {
+function generateMap(){
   generateLandscape();
   placeElements();
+  logMessage(`Nouvelle carte générée !`);
+}
+// Ajouter les éléments à la grille
+onMounted(() => {
+  logMessage(`Welcome to Tersoria !`)
+  generateMap()
 })
 
 const gameStatus = ref('running')
+const emit = defineEmits(['logMessage']);
+const logMessage = (message) => {
+  emit('logMessage', message)
+}
 
 // Déplacer le joueur
 function movePlayer(direction) {
 
   // Gestion de la fin de la partie
   if (gameStatus.value !== 'running') return
+
+  logMessage(`Déplacement vers ${direction}`);
 
   const oldPosition = { ...playerPosition.value };
   let newPosition = { ...playerPosition.value };
@@ -155,14 +166,14 @@ function movePlayer(direction) {
     // Rencontre avec un monstre
     if (board.value[newPosition.y][newPosition.x].content === 'monster') {
       moveIsAllowed = false
-      console.log('General Kenobi !!')
+      logMessage('General Kenobi !!')
     }
 
     if (moveIsAllowed) {
 
       // Vérifier si le joueur arrive au trésor
       if (board.value[newPosition.y][newPosition.x].content === 'treasure') {
-        console.log('Look at this !!')
+        logMessage('Look at this !!')
         gameStatus.value = 'victory'
       }
 
@@ -170,9 +181,11 @@ function movePlayer(direction) {
       board.value[oldPosition.y][oldPosition.x].content = 'empty';
       board.value[newPosition.y][newPosition.x].content = 'player';
       playerPosition.value = newPosition;
-
+      logMessage(`Mouvement réussi !`);
     }
 
+  } else {
+    logMessage(`Cet obstacle est infranchissable !`);
   }
 }
 
