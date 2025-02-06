@@ -147,15 +147,26 @@ function movePlayer(direction) {
   // Gestion de la fin de la partie
   if (gameStatus.value !== 'running') return
 
-  logMessage(`Déplacement vers ${direction}`);
-
   const oldPosition = { ...playerPosition.value };
   let newPosition = { ...playerPosition.value };
 
-  if (direction === 'up' && newPosition.y > 0) newPosition.y--;
-  if (direction === 'down' && newPosition.y < boardHeight - 1) newPosition.y++;
-  if (direction === 'left' && newPosition.x > 0) newPosition.x--;
-  if (direction === 'right' && newPosition.x < boardWidth - 1) newPosition.x++;
+  // Calcul de la nouvelle position en fonction de la direction
+  if (direction === 'up') newPosition.y--;
+  if (direction === 'down') newPosition.y++;
+  if (direction === 'left') newPosition.x--;
+  if (direction === 'right') newPosition.x++;
+
+  // Vérifier si la nouvelle position est hors des limites
+  if (
+      newPosition.x < 0 ||
+      newPosition.x >= boardWidth ||
+      newPosition.y < 0 ||
+      newPosition.y >= boardHeight
+  ) {
+    logMessage(`Vers l'infini et au-delà !!! ... Tu t'es pris pour un passe muraille c'est ça ?`);
+    return; // On arrête l'exécution
+  }
+
 
   // Vérifier que la nouvelle position est valide (terrain accessible uniquement)
   if (board.value[newPosition.y][newPosition.x].texture === 'grass') {
