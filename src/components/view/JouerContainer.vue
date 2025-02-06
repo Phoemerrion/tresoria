@@ -1,9 +1,14 @@
 <script setup>
-
+import Plateau from "../game/Plateau.vue";
 </script>
 
 <template>
-Jouer (en cours de réalisation)
+  <div class="row">
+    <div class="col-8">
+      <Plateau/>
+    </div>
+  </div>
+
 </template>
 
 <style scoped>
