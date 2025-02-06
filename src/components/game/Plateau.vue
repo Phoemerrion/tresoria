@@ -16,16 +16,8 @@ const textures = [
 const numberOfCells = boardWidth * boardHeight;
 const numberOfMonsters = Math.floor(numberOfCells * 0.1); // 10% des cellules pour les monstres
 
-// Initialisation de la grille avec les textures d'herbe
-const board = ref(
-    Array.from({ length: boardHeight }, () =>
-        Array.from({ length: boardWidth }, () => ({
-          texture: 'grass', // Par défaut
-          content: 'empty'
-        }))
-    )
-);
-const playerPosition = ref({ x: 0, y: 0 }); // Initialisée à (0, 0)
+const board = ref([]);
+const playerPosition = ref({});
 
 // Générer et connecter les cellules d'un type donné ('water' ou 'rock')
 function generateConnectedCells(type, percentageOfCells) {
@@ -112,6 +104,7 @@ function placeElements() {
   // Placer le joueur
   playerPosition.value = getRandomEmptyGrassCell();
   board.value[playerPosition.value.y][playerPosition.value.x].content = 'player';
+  playerStats.value.health = playerStats.value.maxHealth; // Régénération des PV
 
   // Placer le trésor
   const treasurePosition = getRandomEmptyGrassCell();
@@ -125,8 +118,17 @@ function placeElements() {
 }
 
 function generateMap(){
+  // Initialisation de la grille avec les textures d'herbe
+  board.value = Array.from({ length: boardHeight }, () =>
+      Array.from({ length: boardWidth }, () => ({
+        texture: 'grass', // Par défaut
+        content: 'empty', // Aucun monstre, trésor ou joueur
+      }))
+  );
+
   generateLandscape();
   placeElements();
+  gameStatus.value = 'running'
   logMessage(`Nouvelle carte générée !`);
 }
 // Ajouter les éléments à la grille
@@ -167,7 +169,6 @@ function movePlayer(direction) {
     return; // On arrête l'exécution
   }
 
-
   // Vérifier que la nouvelle position est valide (terrain accessible uniquement)
   if (board.value[newPosition.y][newPosition.x].texture === 'grass') {
 
@@ -178,6 +179,20 @@ function movePlayer(direction) {
     if (board.value[newPosition.y][newPosition.x].content === 'monster') {
       moveIsAllowed = false
       logMessage('General Kenobi !!')
+
+      generateMonsterStats();
+      const combatResult = handleMonsterEncounter();
+
+      if (combatResult === 'monsterDefeated') {
+        logMessage("Tu l'as eu !!")
+        moveIsAllowed = true
+      } else if (combatResult === 'playerDefeated') {
+        logMessage("Tu t'es fait laver !!")
+        gameStatus.value = 'defeat'
+        generateMap(); // Réinitialiser la carte
+      } else {
+        logMessage("Chacun repars de son côté avec une portion de soupe de phalanges...")
+      }
     }
 
     if (moveIsAllowed) {
@@ -197,6 +212,44 @@ function movePlayer(direction) {
 
   } else {
     logMessage(`Cet obstacle est infranchissable !`);
+  }
+}
+
+const playerStats = ref({
+  health: 100, // Points de vie
+  maxHealth: 100, // Points de vie maximum
+  strength: 30, // Force d'attaque
+});
+
+const monsterStats = ref({
+  health: null,
+  strength: null
+})
+
+// Fonction pour générer des statistiques aléatoires pour les monstres
+function generateMonsterStats() {
+  monsterStats.value = {
+    health: Math.floor(Math.random() * 50) + 20, // Points de vie entre 20 et 70
+    strength: Math.floor(Math.random() * 20) + 10, // Force d'attaque entre 10 et 30
+  };
+}
+
+// Gérer les combats avec un monstre
+function handleMonsterEncounter() {
+  // Comparer la force du joueur avec les PV du monstre
+  if (playerStats.value.strength >= monsterStats.value.health) {
+    // Le joueur tue le monstre
+    logMessage(`Le joueur a vaincu le monstre !`);
+    playerStats.value.health = playerStats.value.maxHealth; // Régénération des PV
+    return 'monsterDefeated';
+  } else {
+    // Le monstre survit et attaque le joueur
+    playerStats.value.health -= monsterStats.value.strength;
+    logMessage(
+        `Le monstre t'a mis une tarte. Tu as perdu ${monsterStats.value.strength} points de vie.`
+    );
+    if (playerStats.value.health <= 0) return 'playerDefeated';
+    return 'monsterSurvived';
   }
 }
 
