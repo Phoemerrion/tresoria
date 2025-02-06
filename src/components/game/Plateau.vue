@@ -14,7 +14,7 @@ const textures = [
 ];
 
 const numberOfCells = boardWidth * boardHeight;
-const numberOfMonsters = Math.floor(numberOfCells * 0.2); // 20% des cellules pour les monstres
+const numberOfMonsters = Math.floor(numberOfCells * 0.1); // 10% des cellules pour les monstres
 
 // Initialisation de la grille avec les textures d'herbe
 const board = ref(
@@ -86,9 +86,14 @@ function generateConnectedCells(type, percentageOfCells) {
   }
 }
 
-// Générer les cellules `water` (20%) et `rock` (10%)
-generateConnectedCells('water', 0.2); // 20% pour water
-generateConnectedCells('rock', 0.1);  // 10% pour rock
+function generateLandscape () {
+  generateConnectedCells('water', 0.03); // 3% pour water
+  generateConnectedCells('rock', 0.05);  // 5% pour rock
+  generateConnectedCells('water', 0.03); // 3% pour water
+  generateConnectedCells('rock', 0.05);  // 5% pour rock
+  generateConnectedCells('water', 0.03); // 3% pour water
+  generateConnectedCells('rock', 0.05);  // 5% pour rock
+}
 
 // Placer le joueur, le trésor, et les monstres (herbe uniquement)
 function placeElements() {
@@ -121,6 +126,7 @@ function placeElements() {
 
 // Ajouter les éléments à la grille
 onMounted(() => {
+  generateLandscape();
   placeElements();
 })
 
