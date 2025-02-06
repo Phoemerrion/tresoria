@@ -130,8 +130,14 @@ onMounted(() => {
   placeElements();
 })
 
+const gameStatus = ref('running')
+
 // Déplacer le joueur
 function movePlayer(direction) {
+
+  // Gestion de la fin de la partie
+  if (gameStatus.value !== 'running') return
+
   const oldPosition = { ...playerPosition.value };
   let newPosition = { ...playerPosition.value };
 
@@ -142,10 +148,31 @@ function movePlayer(direction) {
 
   // Vérifier que la nouvelle position est valide (terrain accessible uniquement)
   if (board.value[newPosition.y][newPosition.x].texture === 'grass') {
-    // Mise à jour de la grille
-    board.value[oldPosition.y][oldPosition.x].content = 'empty';
-    board.value[newPosition.y][newPosition.x].content = 'player';
-    playerPosition.value = newPosition;
+
+    // Mouvement autorisé par défaut
+    let moveIsAllowed = true
+
+    // Rencontre avec un monstre
+    if (board.value[newPosition.y][newPosition.x].content === 'monster') {
+      moveIsAllowed = false
+      console.log('General Kenobi !!')
+    }
+
+    if (moveIsAllowed) {
+
+      // Vérifier si le joueur arrive au trésor
+      if (board.value[newPosition.y][newPosition.x].content === 'treasure') {
+        console.log('Look at this !!')
+        gameStatus.value = 'victory'
+      }
+
+      // Mise à jour de la grille
+      board.value[oldPosition.y][oldPosition.x].content = 'empty';
+      board.value[newPosition.y][newPosition.x].content = 'player';
+      playerPosition.value = newPosition;
+
+    }
+
   }
 }
 
