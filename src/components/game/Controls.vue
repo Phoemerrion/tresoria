@@ -28,14 +28,16 @@ function move(direction) {
 </script>
 
 <template>
-  <div>
-    <div class="d-flex justify-content-center">
-      <button class="btn btn-info bi bi-arrow-up" @click="move('up')"/>
-    </div>
-    <div class="d-flex justify-content-between">
-      <i class="btn btn-info bi bi-arrow-left" @click="move('left')"/>
-      <i class="btn btn-info bi bi-arrow-down" @click="move('down')"/>
-      <i class="btn btn-info bi bi-arrow-right" @click="move('right')"/>
+  <div class="row">
+    <div class="col-2">
+      <div class="d-flex justify-content-center">
+        <button class="btn btn-info bi bi-arrow-up" @click="move('up')"/>
+      </div>
+      <div class="d-flex justify-content-between">
+        <i class="btn btn-info bi bi-arrow-left" @click="move('left')"/>
+        <i class="btn btn-info bi bi-arrow-down" @click="move('down')"/>
+        <i class="btn btn-info bi bi-arrow-right" @click="move('right')"/>
+      </div>
     </div>
   </div>
 </template>

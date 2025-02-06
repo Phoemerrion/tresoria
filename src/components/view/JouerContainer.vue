@@ -9,7 +9,7 @@ const plateau = ref(null);
 const logMessages = ref([]); // Tableau observé pour les logs
 
 const logMessage = (message) => {
-    logMessages.value.push(message);
+  logMessages.value.push(message);
 }
 
 // Gérer le mouvement
@@ -30,11 +30,7 @@ function handleMove(direction) {
       </div>
     </div>
   </div>
-  <div class="row">
-    <div class="col-2">
-      <Controls @move="handleMove"/>
-    </div>
-  </div>
+  <Controls @move="handleMove"/>
 
 </template>
 
