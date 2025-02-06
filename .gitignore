@@ -1,0 +1,9 @@
+# Dependancies
+/node_modules
+/package-lock.json
+
+# Distribution
+/dist
+
+# intelliJ ide
+/.idea
