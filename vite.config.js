@@ -1,9 +1,10 @@
 // doc : https://vitejs.dev/config/
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import path from 'path'
+import dotenv from 'dotenv'
+dotenv.config()
 export default defineConfig({
-  base: `/${path.basename(__dirname)}/dist/`,
+  base: process.env.VITE_BASE_URL || `/`,
   plugins: [vue()],
   build: {
     rollupOptions: {

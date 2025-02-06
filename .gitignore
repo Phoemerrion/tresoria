@@ -7,3 +7,5 @@
 
 # intelliJ ide
 /.idea
+
+**/.env
