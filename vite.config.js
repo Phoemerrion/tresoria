@@ -6,10 +6,11 @@ export default defineConfig({
   base: `/${path.basename(__dirname)}/dist/`,
   plugins: [vue()],
   build: {
-    watch: {
-      exclude: [
-        'dist/**',
-      ]
-    }
+    rollupOptions: {
+      output: {
+        dir: 'dist', // Exclure le dossier dist des entrées
+      },
+    },
+    emptyOutDir: true, // Nettoie le répertoire de sortie avant le nouveau build
   }
 })
