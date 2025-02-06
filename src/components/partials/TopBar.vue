@@ -20,9 +20,6 @@
           <li class="nav-item mx-md-5">
             <a class="nav-link" href="#" @click.stop.prevent="$emit('navigate', 'Jouer')">Jouer</a>
           </li>
-          <li class="nav-item ms-md-5">
-            <a class="nav-link" href="#" @click.stop.prevent="$emit('navigate', 'Aide')">Aide</a>
-          </li>
         </ul>
       </div>
     </div>

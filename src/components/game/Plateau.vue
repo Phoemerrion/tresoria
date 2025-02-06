@@ -133,7 +133,7 @@ function generateMap(){
 }
 // Ajouter les éléments à la grille
 onMounted(() => {
-  logMessage(`Welcome to Tersoria !`)
+  logMessage(`Welcome to Tresoria !`)
   generateMap()
 })
 
