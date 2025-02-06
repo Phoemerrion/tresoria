@@ -1,9 +1,9 @@
 <script setup>
-import {onMounted, ref} from 'vue';
+import {onBeforeUnmount, onMounted, ref} from 'vue';
 import Cell from './Cell.vue';
 
 // Dimensions de la grille
-const boardWidth = 20;
+const boardWidth = 30;
 const boardHeight = 15;
 
 // Constantes
@@ -143,6 +143,23 @@ const logMessage = (message) => {
   emit('logMessage', message)
 }
 
+onMounted(() => {
+  window.addEventListener('keydown', handleKeyDown); // Ajouter l'écoute des touches
+});
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeyDown); // Supprimer les écouteurs
+});
+
+// Gérer les entrées clavier
+function handleKeyDown(event) {
+  switch (event.key) {
+    case 'ArrowUp' : case 'z' : movePlayer('up');event.preventDefault();break;
+    case 'ArrowDown' : case 's' : movePlayer('down');event.preventDefault();break;
+    case 'ArrowLeft' : case 'q' : movePlayer('left');event.preventDefault();break;
+    case 'ArrowRight' : case 'd' : movePlayer('right');event.preventDefault();break;
+  }
+}
+
 // Déplacer le joueur
 function movePlayer(direction) {
 
@@ -253,30 +270,12 @@ function handleMonsterEncounter() {
   }
 }
 
-// Exposer la méthode `movePlayer` au parent
-defineExpose({
-  movePlayer
-});
-
 </script>
 
 <template>
-  <div class="container">
-    <div class="row">
-      <div
-          v-for="(row, y) in board"
-          :key="y"
-          class="d-flex"
-      >
-        <Cell
-            v-for="(cell, x) in row"
-            :key="x"
-            :x="x"
-            :y="y"
-            :texture="cell.texture"
-            :content="cell.content"
-        />
-      </div>
+  <div class="mx-0 my-lg-1 mx-lg-5">
+    <div v-for="(row, y) in board" :key="y" class="d-flex">
+      <Cell v-for="(cell, x) in row" :key="x" :x="x" :y="y" :texture="cell.texture" :content="cell.content"/>
     </div>
   </div>
 </template>

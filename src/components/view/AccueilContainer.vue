@@ -22,10 +22,10 @@
     <h2 class="mt-5">Contrôles</h2>
     <p>Vous pouvez déplacer votre personnage à l'aide des touches fléchées de votre clavier :</p>
     <ul>
-      <li class="mb-2"><b>Flèche haut :</b> Déplacer vers le haut.</li>
-      <li class="mb-2"><b>Flèche bas :</b> Déplacer vers le bas.</li>
-      <li class="mb-2"><b>Flèche gauche :</b> Déplacer vers la gauche.</li>
-      <li class="mb-2"><b>Flèche droite :</b> Déplacer vers la droite.</li>
+      <li class="mb-2"><b>Flèche haut | Z :</b> Déplacer vers le haut.</li>
+      <li class="mb-2"><b>Flèche bas | S :</b> Déplacer vers le bas.</li>
+      <li class="mb-2"><b>Flèche gauche | Q :</b> Déplacer vers la gauche.</li>
+      <li class="mb-2"><b>Flèche droite | D :</b> Déplacer vers la droite.</li>
     </ul>
     <p class="mb-5">
       Des boutons de contrôle sont également disponibles à l'écran.
