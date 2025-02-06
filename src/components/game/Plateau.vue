@@ -25,6 +25,7 @@ const board = ref(
         }))
     )
 );
+const playerPosition = ref({ x: 0, y: 0 }); // Initialisée à (0, 0)
 
 // Générer et connecter les cellules d'un type donné ('water' ou 'rock')
 function generateConnectedCells(type, percentageOfCells) {
@@ -104,8 +105,8 @@ function placeElements() {
   }
 
   // Placer le joueur
-  const playerPosition = getRandomEmptyGrassCell();
-  board.value[playerPosition.y][playerPosition.x].content = 'player';
+  playerPosition.value = getRandomEmptyGrassCell();
+  board.value[playerPosition.value.y][playerPosition.value.x].content = 'player';
 
   // Placer le trésor
   const treasurePosition = getRandomEmptyGrassCell();
@@ -122,6 +123,30 @@ function placeElements() {
 onMounted(() => {
   placeElements();
 })
+
+// Déplacer le joueur
+function movePlayer(direction) {
+  const oldPosition = { ...playerPosition.value };
+  let newPosition = { ...playerPosition.value };
+
+  if (direction === 'up' && newPosition.y > 0) newPosition.y--;
+  if (direction === 'down' && newPosition.y < boardHeight - 1) newPosition.y++;
+  if (direction === 'left' && newPosition.x > 0) newPosition.x--;
+  if (direction === 'right' && newPosition.x < boardWidth - 1) newPosition.x++;
+
+  // Vérifier que la nouvelle position est valide (terrain accessible uniquement)
+  if (board.value[newPosition.y][newPosition.x].texture === 'grass') {
+    // Mise à jour de la grille
+    board.value[oldPosition.y][oldPosition.x].content = 'empty';
+    board.value[newPosition.y][newPosition.x].content = 'player';
+    playerPosition.value = newPosition;
+  }
+}
+
+// Exposer la méthode `movePlayer` au parent
+defineExpose({
+  movePlayer
+});
 
 </script>
 
