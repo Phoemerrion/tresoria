@@ -1,5 +1,5 @@
 <script setup>
-import {computed, defineProps} from 'vue';
+import {computed} from 'vue';
 import AccueilContainer from "../view/AccueilContainer.vue";
 import JouerContainer from "../view/JouerContainer.vue";
 

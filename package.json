@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "build-watch": "vite build --watch --minify false"
+    "build-watch": "vite build --watch --minify false",
+    "dev": "vite"
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
