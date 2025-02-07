@@ -19,6 +19,12 @@ const gameBoard = ref(new GameBoard());
    window.addEventListener('keydown', handleKeyDown);
  });
 
+ // Exposer la référence `gameBoard` au parent
+defineExpose({
+  gameBoard
+});
+
+
 </script>
 
 <template>
