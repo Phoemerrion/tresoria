@@ -1,15 +1,11 @@
 <script setup>
 import { computed } from 'vue';
 
-// Accepter les logs via une prop
-const props = defineProps({
-  logs: {
-    type: Array,
-    default: () => [], // Tableau vide par défaut
-  },
-});
+// Référence pour le loggerStore
+import {useLoggerStore} from "../store/loggerStore.js";
+const logger = useLoggerStore()
 
-const displayedLogs = computed(() => [...props.logs].reverse());
+const displayedLogs = computed(() => [...logger.logs].reverse());
 </script>
 
 <template>
@@ -19,7 +15,7 @@ const displayedLogs = computed(() => [...props.logs].reverse());
         :key="index"
         class="list-group-item bg-dark border-dark"
     >
-      <span class="text-light">{{ log }}</span>
+      <span class="text-light">{{ log.message }}</span>
     </li>
   </ul>
 </template>

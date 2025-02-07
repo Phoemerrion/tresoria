@@ -6,11 +6,9 @@ import Console from "../game/Console.vue";
 // Référence pour Plateau
 const plateau = ref(null);
 
-// Logger de la console
-const logMessages = ref([]); // Tableau observé pour les logs
-const logMessage = (message) => {
-  logMessages.value.push(message);
-}
+// Référence pour le loggerStore
+import {useLoggerStore} from "../store/loggerStore.js";
+const logger = useLoggerStore()
 
 </script>
 
@@ -18,10 +16,10 @@ const logMessage = (message) => {
   <div class="card bg-dark p-0 mb-4">
     <div class="card-header"/>
     <div class="card-body p-0">
-      <Plateau ref="plateau" @logMessage="logMessage"/>
+      <Plateau ref="plateau" @logMessage="logger.logMessage()"/>
     </div>
     <div class="card-footer bg-dark p-0">
-      <Console :logs="logMessages"/>
+      <Console/>
     </div>
   </div>
 </template>
