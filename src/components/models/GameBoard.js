@@ -53,7 +53,7 @@ export default class GameBoard {
             // Placement initial ou connexion à une cellule existante
             if (
                 this.board[y][x].texture === 'grass' && // Uniquement sur herbe
-                !this.isTooCloseToEdge(x, y) && // Pas trop proche du bord
+                !this.isOutOfBoard(x, y) &&
                 !this.hasInvalidNeighbor(x, y, type === 'water' ? 'rock' : 'water') && // Vérification de séparation
                 (placedCells === 0 || this.hasMatchingNeighbor(x, y, type)) // Doit être connecté
             ) {
@@ -65,37 +65,45 @@ export default class GameBoard {
 
     // Fonction utilitaire : vérifier les voisins pour éviter la proximité avec un autre type
     hasInvalidNeighbor(x, y, forbiddenType) {
-        const neighbors = [
-            { nx: x - 2, ny: y }, // Gauche
-            { nx: x + 2, ny: y }, // Droite
-            { nx: x, ny: y - 2 }, // Haut
-            { nx: x, ny: y + 2 }  // Bas
-        ];
-        return neighbors.some(({ nx, ny }) =>
-            ny >= 0 && ny < this.boardHeight &&
-            nx >= 0 && nx < this.boardWidth &&
-            this.board[ny][nx].texture === forbiddenType
+        const neighbors = this.calculateNeighborCells(x, y);
+        return neighbors.some(({ x, y }) =>
+            y >= 0 && y < this.boardHeight &&
+            x >= 0 && x < this.boardWidth &&
+            this.board[y][x].texture === forbiddenType
         );
     }
 
     // Fonction utilitaire : vérifier les voisins pour garantir la connexion
     hasMatchingNeighbor(x, y, matchType) {
-        const neighbors = [
-            { nx: x - 1, ny: y }, // Gauche
-            { nx: x + 1, ny: y }, // Droite
-            { nx: x, ny: y - 1 }, // Haut
-            { nx: x, ny: y + 1 }  // Bas
-        ];
-        return neighbors.some(({ nx, ny }) =>
-            ny >= 0 && ny < this.boardHeight &&
-            nx >= 0 && nx < this.boardWidth &&
-            this.board[ny][nx].texture === matchType
+        const neighbors = this.calculateNeighborCells(x, y);
+        return neighbors.some(({ x, y }) =>
+            y >= 0 && y < this.boardHeight &&
+            x >= 0 && x < this.boardWidth &&
+            this.board[y][x].texture === matchType
         );
     }
 
-    // Fonction utilitaire : vérifier si une position est trop proche du bord
-    isTooCloseToEdge(x, y) {
-        return x === 0 || x === this.boardWidth - 1 || y === 0 || y === this.boardHeight - 1;
+    // Fonction utilitaire : vérifier si une position est dans le plateau
+    isOutOfBoard (cell) {
+        return (
+            cell.x < 0 || cell.x >= this.boardWidth
+            ||
+            cell.y < 0 || cell.y >= this.boardHeight
+        );
+    }
+
+    // Fonction utilitaire : calculer toutes les cellules voisines
+    calculateNeighborCells(x, y) {
+        return [
+            { x: x + 0, y: y + 1 },  // Haut
+            { x: x + 1, y: y + 0 },  // Droite
+            { x: x + 0, y: y - 1 },  // Bas
+            { x: x - 1, y: y + 0 },  // Gauche
+            { x: x + 1, y: y + 1 },  // Diagonale haut-droite
+            { x: x + 1, y: y - 1 },  // Diagonale bas-droite
+            { x: x - 1, y: y - 1 },  // Diagonale bas-gauche
+            { x: x - 1, y: y + 1 },  // Diagonale haut-gauche
+        ];
     }
 
     /** Object generation */
