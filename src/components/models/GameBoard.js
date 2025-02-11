@@ -34,52 +34,73 @@ export default class GameBoard {
     }
 
     generateLandscape() {
-        this.generateConnectedCells('water', 0.03);
-        this.generateConnectedCells('rock', 0.05);
-        this.generateConnectedCells('water', 0.03);
-        this.generateConnectedCells('rock', 0.05);
+        this.generateProceduralObstacle('water', Math.floor(this.boardWidth * this.boardHeight * 0.15));
+        this.generateProceduralObstacle('rock', Math.floor(this.boardWidth * this.boardHeight * 0.10));
+        this.generateProceduralObstacle('water', Math.floor(this.boardWidth * this.boardHeight * 0.10));
+        this.generateProceduralObstacle('rock', Math.floor(this.boardWidth * this.boardHeight * 0.15));
     }
 
-    generateConnectedCells(type, percentageOfCells) {
-        const totalConnectedCells = Math.floor(this.boardWidth * this.boardHeight * percentageOfCells);
-
+    // Fonction de génération procédurale d'ensemble de cellules infranchissables
+    generateProceduralObstacle(type, totalConnectedCells) {
         let placedCells = 0;
 
-        // Placement des cellules connectées
-        while (placedCells < totalConnectedCells) {
-            const x = Math.floor(Math.random() * this.boardWidth);
-            const y = Math.floor(Math.random() * this.boardHeight);
+        // Choisir un point de départ aléatoire
+        const startX = Math.floor(Math.random() * this.boardWidth);
+        const startY = Math.floor(Math.random() * this.boardHeight);
 
-            // Placement initial ou connexion à une cellule existante
-            if (
-                this.board[y][x].texture === 'grass' && // Uniquement sur herbe
-                !this.isOutOfBoard(x, y) &&
-                !this.hasInvalidNeighbor(x, y, type === 'water' ? 'rock' : 'water') && // Vérification de séparation
-                (placedCells === 0 || this.hasMatchingNeighbor(x, y, type)) // Doit être connecté
-            ) {
-                this.board[y][x].texture = type;
-                placedCells++;
+        // Initialiser la cellule actuelle avec le point de départ
+        let currentCell = { x: startX, y: startY };
+        this.board[currentCell.y][currentCell.x].texture = type;
+        placedCells++;
+
+        // Propagation séquentielle
+        while (placedCells < totalConnectedCells) {
+            // Obtenir les voisins de la cellule actuelle
+            const neighbors = this.calculateNeighborCells(currentCell, false);
+            let foundValidNeighbor = false;
+
+            // Mélanger les voisins pour un comportement plus aléatoire
+            this.shuffle(neighbors);
+
+            for (const neighbor of neighbors) {
+
+                // Vérifier les conditions de placement
+                if (
+                    !this.isOutOfBoard(neighbor)
+                    // && this.board[neighbor.y][neighbor.x].texture === 'grass'
+                    && !this.hasInvalidNeighbor(neighbor, type === 'water' ? 'rock' : 'water')
+                    && this.hasMatchingNeighbor(neighbor, type)
+                ) {
+                    this.board[neighbor.y][neighbor.x].texture = type;
+                    placedCells++;
+                    currentCell = neighbor; // Mettre à jour la cellule actuelle
+                    foundValidNeighbor = true;
+                    break; // Passer à la prochaine itération avec la nouvelle cellule actuelle
+                }
             }
+
+            // Si aucun voisin valide n'est trouvé, arrêter la propagation
+            if (!foundValidNeighbor) break;
         }
     }
 
     // Fonction utilitaire : vérifier les voisins pour éviter la proximité avec un autre type
-    hasInvalidNeighbor(x, y, forbiddenType) {
-        const neighbors = this.calculateNeighborCells(x, y);
-        return neighbors.some(({ x, y }) =>
-            y >= 0 && y < this.boardHeight &&
-            x >= 0 && x < this.boardWidth &&
-            this.board[y][x].texture === forbiddenType
+    hasInvalidNeighbor(cell, forbiddenType) {
+        const neighbors = this.calculateNeighborCells(cell, true, 2);
+        return neighbors.some((cell) =>
+            cell.y >= 0 && cell.y < this.boardHeight &&
+            cell.x >= 0 && cell.x < this.boardWidth &&
+            this.board[cell.y][cell.x].texture === forbiddenType
         );
     }
 
     // Fonction utilitaire : vérifier les voisins pour garantir la connexion
-    hasMatchingNeighbor(x, y, matchType) {
-        const neighbors = this.calculateNeighborCells(x, y);
-        return neighbors.some(({ x, y }) =>
-            y >= 0 && y < this.boardHeight &&
-            x >= 0 && x < this.boardWidth &&
-            this.board[y][x].texture === matchType
+    hasMatchingNeighbor(cell, matchType) {
+        const neighbors = this.calculateNeighborCells(cell, false, 1);
+        return neighbors.some((cell) =>
+            cell.y >= 0 && cell.y < this.boardHeight &&
+            cell.x >= 0 && cell.x < this.boardWidth &&
+            this.board[cell.y][cell.x].texture === matchType
         );
     }
 
@@ -93,17 +114,31 @@ export default class GameBoard {
     }
 
     // Fonction utilitaire : calculer toutes les cellules voisines
-    calculateNeighborCells(x, y) {
-        return [
-            { x: x + 0, y: y + 1 },  // Haut
-            { x: x + 1, y: y + 0 },  // Droite
-            { x: x + 0, y: y - 1 },  // Bas
-            { x: x - 1, y: y + 0 },  // Gauche
-            { x: x + 1, y: y + 1 },  // Diagonale haut-droite
-            { x: x + 1, y: y - 1 },  // Diagonale bas-droite
-            { x: x - 1, y: y - 1 },  // Diagonale bas-gauche
-            { x: x - 1, y: y + 1 },  // Diagonale haut-gauche
-        ];
+    calculateNeighborCells(cell, includeDiagonals = true, range = 1) {
+        let neighbors = [];
+        for (let step = 1; step <= range; step++) {
+            neighbors.push(
+                { x: cell.x + 0, y: cell.y + step },  // Haut
+                { x: cell.x + step, y: cell.y + 0 },  // Droite
+                { x: cell.x + 0, y: cell.y - step },  // Bas
+                { x: cell.x - step, y: cell.y + 0 },  // Gauche
+            )
+            if(includeDiagonals === true) neighbors.push(
+                { x: cell.x + step, y: cell.y + step },  // Diagonale haut-droite
+                { x: cell.x + step, y: cell.y - step },  // Diagonale bas-droite
+                { x: cell.x - step, y: cell.y - step },  // Diagonale bas-gauche
+                { x: cell.x - step, y: cell.y + step },  // Diagonale haut-gauche
+            )
+        }
+        return neighbors;
+    }
+
+    // Fonction utilitaire : mélanger un tableau (algorithme de Fisher-Yates)
+    shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
     }
 
     /** Object generation */
