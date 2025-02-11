@@ -1,6 +1,14 @@
 <script setup>
 
 const props = defineProps({
+  x: {
+    type: Number,
+    required: true,
+  },
+  y: {
+    type: Number,
+    required: true,
+  },
   texture: {
     type: String,
     required: true,
@@ -27,6 +35,7 @@ const props = defineProps({
     <span v-if="content === 'player'" class="fs-6 fs-sm-5 fs-md-4 fs-lg-3">🧍</span>
     <span v-else-if="content === 'treasure'" class="fs-6 fs-sm-5 fs-md-4 fs-lg-3">💰</span>
     <span v-else-if="content === 'monster'" class="fs-6 fs-sm-5 fs-md-4 fs-lg-3">👹</span>
+    <span v-else class="fs-6 fs-sm-5 fs-md-4 fs-lg-3">{{x}}:{{y}}</span>
   </div>
 </template>
 

@@ -7,7 +7,7 @@ export default class GameBoard {
         this.board = [];
         this.playerPosition = { x: 0, y: 0 };
         this.gameStatus = 'running';
-        this.numberOfMonsters = Math.floor(this.boardWidth * this.boardHeight * 0.1);
+        this.numberOfMonsters = Math.floor(this.boardWidth * this.boardHeight * 0.05);
         this.playerStats = { health: 100, maxHealth: 100, strength: 30 };
         this.monsterStats = { health: null, strength: null };
         this.loggerStore = useLoggerStore()
@@ -183,9 +183,7 @@ export default class GameBoard {
             ||
             newY < 0 || newY >= this.boardHeight
         ) {
-            this.loggerStore.logMessage(
-                `Vers l'infini et au-delà !!! ... Tu t'es pris pour un passe muraille c'est ça ?`
-            )
+            this.loggerStore.logMessage(`Vers l'infini et au-delà !!!...`)
             return
         }
 
@@ -221,6 +219,7 @@ export default class GameBoard {
 
             this.board[this.playerPosition.y][this.playerPosition.x].content = 'empty';
             this.playerPosition = { x: newX, y: newY };
+            this.loggerStore.logMessage(`Player is now on ${newX}:${newY}`)
             this.board[newY][newX].content = 'player';
         }
     }
