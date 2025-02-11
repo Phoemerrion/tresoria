@@ -183,7 +183,7 @@ export default class GameBoard {
             ||
             newY < 0 || newY >= this.boardHeight
         ) {
-            this.loggerStore.logMessage(`Vers l'infini et au-delà !!!...`)
+            this.loggerStore.logMessage(`Vers l'infini et au-delà !!!... (${newX}:${newY})`)
             return
         }
 
@@ -193,14 +193,14 @@ export default class GameBoard {
                 case 'water' : message = `T'es déjà capable de te noyer dans un verre d'eau...`;break
                 case 'rock' : message = `Même si t'es une vraie tête de pioche...`;break
             }
-            this.loggerStore.logMessage(`Cet obstacle est infranchissable ! ${message}`)
+            this.loggerStore.logMessage(`Cet obstacle est infranchissable ! ${message} (${newX}:${newY})`)
             return
         }
 
         let moveIsAllowed = true;
 
         if (this.board[newY][newX].content === 'monster') {
-            this.loggerStore.logMessage(`Général Kenobi !!`)
+            this.loggerStore.logMessage(`Général Kenobi !! (${newX}:${newY})`)
             moveIsAllowed = false;
             this.generateMonsterStats();
             const combatResult = this.handleMonsterEncounter();
@@ -214,6 +214,7 @@ export default class GameBoard {
 
         if (moveIsAllowed) {
             if (this.board[newY][newX].content === 'treasure') {
+                this.loggerStore.logMessage(`Treasure found on ${newX}:${newY}`)
                 this.gameStatus = 'victory';
             }
 
